@@ -1,0 +1,8 @@
+estimator/*
+!estimator/README
+
+*.pyc
+*.pyo
+
+*.npy
+!src/MainWindow/front_icon.npy

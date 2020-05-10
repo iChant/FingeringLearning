@@ -1,2 +1,8 @@
-FingeringLearning
-===
+# FingeringLearning
+
+## Requirements
+
+FastDTW for DTW implements, PySide2 for Qt Gui.
+
+Also, a hand-pose-estimate model is needed to get hand info.
+
