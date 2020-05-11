@@ -2,11 +2,11 @@ import numpy as np
 from fastdtw import fastdtw
 
 
-def get_feat(ser):
-    f = ser.reshape(ser.shape[0], ser.shape[1] * ser.shape[2])
-    f1, f2 = f[:, :3], f[:, 3:]
-    feat = f2 - np.tile(f1, (1, ser.shape[1] - 1))
-    return feat.reshape((ser.shape[0], ser.shape[1] - 1, ser.shape[2]))
+# def get_feat(ser):
+#     f = ser.reshape(ser.shape[0], ser.shape[1] * ser.shape[2])
+#     f1, f2 = f[:, :3], f[:, 3:]
+#     feat = f2 - np.tile(f1, (1, ser.shape[1] - 1))
+#     return feat.reshape((ser.shape[0], ser.shape[1] - 1, ser.shape[2]))
 
 
 def cos_dist(v1, v2):
@@ -16,12 +16,17 @@ def cos_dist(v1, v2):
 def __dist(f1, f2):
     """
     f1, f2 are all features get from poses, [vec_1, vec_2, ... , vec_n],
-    in which vec_i is a frame of feature
     """
-    res = 0
-    for i in range(f1.shape[0]):
-        res += cos_dist(f1[i], f2[i]) ** 2
-    return np.sqrt(res / f1.shape[0])
+    res = np.array([cos_dist(f1[i], f2[i]) for i in range(f1.shape[0])])
+    aver = np.sqrt((res * res).mean())
+    cnt = 0
+    # If there is some values that is obviously larger than the average, then
+    # these 'obsolete' values would describe the dist between f1 and f2.
+    if res[res > aver * 2].shape[0] > 2 or \
+            (res.shape[0] == 3 and res[res > aver * 2].shape[0] == 1):
+        res = res[res > aver * 2]
+    return np.sqrt((res * res).sum() / res.shape[0])
+
 
 
 def running_mean(ser, window_sz=None, axis=None):
@@ -38,6 +43,9 @@ def dtw(x, y):
                  frame_cnt of x and y can be different.
     @return
     """
+    # For serials whose lengths are different too much, 
+    # consider that they are different type.
+    if abs(x.shape[0] - y.shape[0]) > 90: return 1, None
     assert x.shape[1] == y.shape[1], 'input ' + \
         'arrays should have same shape[1]'
     # smooth
@@ -46,13 +54,15 @@ def dtw(x, y):
 
     # feat_x, feat_y = get_feat(x), get_feat(y)
     d, p = fastdtw(x, y, dist=__dist)
+    # d /= min(p[-1][0], p[-1][1])
+    d /= len(p)
     return d, p
 
 
 if __name__ == "__main__":
     from HandPose.HandPose import FINGER_INDEX
-    d1 = np.load('c-1.npy')
-    d2 = np.load('c-2.npy')
+    d1 = np.load('a-1.npy')
+    d2 = np.load('a-2.npy')
     f1, f2 = get_feat(d1), get_feat(d2)
 
     t = FINGER_INDEX.THUMB

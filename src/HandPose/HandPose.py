@@ -16,7 +16,7 @@ class FINGER_INDEX:
     INDEX_TIP = 11
     MIDDLE_MCP = 3
     MIDDLE_PIP = 12
-    MIDDLE_DIP = 12
+    MIDDLE_DIP = 13
     MIDDLE_TIP = 14
     RING_MCP = 4
     RING_PIP = 15
@@ -101,15 +101,15 @@ def get_feat(data: np.array):
     data is an array shaped as (frame_cnt, point_cnt, axis_cnt)
     """
     lines = FINGER_INDEX.lines()
-    total = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    total = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines]).transpose((1, 0, 2))
     lines = FINGER_INDEX.lines('THUMB')
-    thumb = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    thumb = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines]).transpose((1, 0, 2))
     lines = FINGER_INDEX.lines('INDEX')
-    index = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    index = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines]).transpose((1, 0, 2))
     lines = FINGER_INDEX.lines('MIDDLE')
-    middle = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    middle = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines]).transpose((1, 0, 2))
     lines = FINGER_INDEX.lines('RING')
-    ring = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    ring = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines]).transpose((1, 0, 2))
     lines = FINGER_INDEX.lines('PINKY')
-    pinky = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    pinky = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines]).transpose((1, 0, 2))
     return total, thumb, index, middle, ring, pinky
