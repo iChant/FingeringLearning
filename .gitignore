@@ -6,3 +6,6 @@ estimator/*
 
 *.npy
 !src/MainWindow/front_icon.npy
+
+.history/*
+.vscode/*

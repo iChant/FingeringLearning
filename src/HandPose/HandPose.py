@@ -26,12 +26,26 @@ class FINGER_INDEX:
     PINKY_PIP = 18
     PINKY_DIP = 19
     PINKY_TIP = 20
-    
+
     THUMB = [THUMB_MCP, THUMB_PIP, THUMB_DIP, THUMB_TIP]
     INDEX = [INDEX_MCP, INDEX_PIP, INDEX_DIP, INDEX_TIP]
     MIDDLE = [MIDDLE_MCP, MIDDLE_PIP, MIDDLE_DIP, MIDDLE_TIP]
     RING = [RING_MCP, RING_PIP, RING_DIP, RING_TIP]
     PINKY = [PINKY_MCP, PINKY_PIP, PINKY_DIP, PINKY_TIP]
+
+    @classmethod
+    def lines(cls, name: str = None):
+        res = []
+        if name is None:
+            res.extend([(cls.WRIST, cls.__dict__[k])
+                        for k in cls.__dict__ if '_MCP' in k])
+            items = [cls.THUMB, cls.INDEX, cls.MIDDLE, cls.RING, cls.PINKY]
+            for i in items:
+                res.extend([(i[j], i[j + 1]) for j in range(len(i) - 1)])
+        else:
+            item = cls.__dict__[name]
+            res.extend([(item[i], item[i + 1]) for i in range(len(item) - 1)])
+        return res
 
 
 class HandPose:
@@ -75,5 +89,27 @@ class HandPose:
             for p in pose:
                 item = QtDataVisualization.QScatterDataItem()
                 item.setPosition(QVector3D(*p))
-                self.scatter_graph.seriesList()[0].dataProxy().setItem(index, item)
+                self.scatter_graph.seriesList(
+                )[0].dataProxy().setItem(index, item)
                 index += 1
+
+
+def get_feat(data: np.array):
+    """
+    Return feats from data. Returned values are in order of 
+    `total`, `thumb`, `index`, `middle`, `ring`, `pinky`.
+    data is an array shaped as (frame_cnt, point_cnt, axis_cnt)
+    """
+    lines = FINGER_INDEX.lines()
+    total = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    lines = FINGER_INDEX.lines('THUMB')
+    thumb = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    lines = FINGER_INDEX.lines('INDEX')
+    index = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    lines = FINGER_INDEX.lines('MIDDLE')
+    middle = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    lines = FINGER_INDEX.lines('RING')
+    ring = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    lines = FINGER_INDEX.lines('PINKY')
+    pinky = np.array([data[:, i[0], :] - data[:, i[1], :] for i in lines])
+    return total, thumb, index, middle, ring, pinky

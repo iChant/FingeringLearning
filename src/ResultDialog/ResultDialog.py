@@ -6,6 +6,7 @@ from utils.dtw import dtw
 from PySide2.QtWidgets import QDialog, QWidget
 from PySide2.QtCore import QTimer
 
+
 class ResultDialog(QDialog, Ui_ResultDialog):
     def __init__(self, user_gesture, standard_gesture, parent=None):
         super(ResultDialog, self).__init__(parent)
@@ -76,28 +77,36 @@ class ResultDialog(QDialog, Ui_ResultDialog):
         self.is_paused = not self.is_paused
         print(self.is_paused)
 
-    
     def get_dtw(self):
         res = {}
 
+        u_total, u_t, u_i, u_m, u_r, u_p = get_feat(self.user_gesture)
+        s_total, s_t, s_i, s_m, s_r, s_p = get_feat(self.standard_gesture)
+
         # get distance and record them in res
-        res['total'], path = dtw(self.standard_gesture, self.user_gesture)
-        res['thumb'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.THUMB, :],
-            self.user_gesture[:, FINGER_INDEX.THUMB, :])
-        res['index'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.INDEX, :],
-            self.user_gesture[:, FINGER_INDEX.INDEX, :])
-        res['middle'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.MIDDLE, :],
-            self.user_gesture[:, FINGER_INDEX.MIDDLE, :])
-        res['ring'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.RING, :],
-            self.user_gesture[:, FINGER_INDEX.RING, :])
-        res['pinky'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.PINKY, :],
-            self.user_gesture[:, FINGER_INDEX.PINKY, :])
-        
+        # res['total'], path = dtw(self.standard_gesture, self.user_gesture)
+        # res['thumb'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.THUMB, :],
+        #                       self.user_gesture[:, FINGER_INDEX.THUMB, :])
+        # res['index'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.INDEX, :],
+        #                       self.user_gesture[:, FINGER_INDEX.INDEX, :])
+        # res['middle'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.MIDDLE, :],
+        #                        self.user_gesture[:, FINGER_INDEX.MIDDLE, :])
+        # res['ring'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.RING, :],
+        #                      self.user_gesture[:, FINGER_INDEX.RING, :])
+        # res['pinky'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.PINKY, :],
+        #                       self.user_gesture[:, FINGER_INDEX.PINKY, :])
+        res['total'], path = dtw(u_total, s_total)
+        res['thumb'], _ = dtw(u_t, s_t)
+        res['index'], _ = dtw(u_i, s_i)
+        res['middle'], _ = dtw(u_m, s_m)
+        res['ring'], _ = dtw(u_r, s_r)
+        res['pinky'], _ = dtw(u_p, s_p)
+
         # convert distance to similarity score
         for k in res:
             res[k] = (1 - res[k]) * 100
             res[k] = round(res[k], 4)
-        
+
         res['path'] = path
         return res
 
