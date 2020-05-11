@@ -7,7 +7,7 @@ from PySide2.QtWidgets import QDialog, QWidget
 from PySide2.QtCore import QTimer
 
 class ResultDialog(QDialog, Ui_ResultDialog):
-    def __init__(self, parent=None):
+    def __init__(self, user_gesture, standard_gesture, parent=None):
         super(ResultDialog, self).__init__(parent)
         self.setupUi(self)
         self.standard_timer = QTimer()
@@ -36,11 +36,12 @@ class ResultDialog(QDialog, Ui_ResultDialog):
         self.standardLayout.addWidget(self.standard_pose_container)
         self.setLayout(self.standardLayout)
 
-        dists = self.get_dtw()
+        res = self.get_dtw()
 
-        self.set_dist(dists)
+        self.set_dist(res)
         self.tipLabel.setEnabled(True)
-        self.set_tips(dists)
+        self.set_tips(res)
+        print(res)
 
         # self.set_table(dists)
 
@@ -73,10 +74,32 @@ class ResultDialog(QDialog, Ui_ResultDialog):
             self.standard_timer.stop()
             self.pauseButton.setText('Start')
         self.is_paused = not self.is_paused
+        print(self.is_paused)
 
     
     def get_dtw(self):
+        res = {}
+
+        # get distance and record them in res
+        res['total'], path = dtw(self.standard_gesture, self.user_gesture)
+        res['thumb'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.THUMB, :],
+            self.user_gesture[:, FINGER_INDEX.THUMB, :])
+        res['index'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.INDEX, :],
+            self.user_gesture[:, FINGER_INDEX.INDEX, :])
+        res['middle'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.MIDDLE, :],
+            self.user_gesture[:, FINGER_INDEX.MIDDLE, :])
+        res['ring'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.RING, :],
+            self.user_gesture[:, FINGER_INDEX.RING, :])
+        res['pinky'], _ = dtw(self.standard_gesture[:, FINGER_INDEX.PINKY, :],
+            self.user_gesture[:, FINGER_INDEX.PINKY, :])
         
+        # convert distance to similarity score
+        for k in res:
+            res[k] = (1 - res[k]) * 100
+            res[k] = round(res[k], 4)
+        
+        res['path'] = path
+        return res
 
     # def get_dtw(self):
     #     st_feature = get_feature(self.standard_gesture)
@@ -116,20 +139,20 @@ class ResultDialog(QDialog, Ui_ResultDialog):
     #             dists[k] = 0
     #     return dists
 
-    def set_dist(self, dists):
-        self.totalDistLable.setText(str(int(dists['total'])))
-        self.thumbDistLable.setText(str(int(dists['thumb'])))
-        self.indexDistLable.setText(str(int(dists['index'])))
-        self.middleDistLable.setText(str(int(dists['middle'])))
-        self.ringDistLable.setText(str(int(dists['ring'])))
-        self.pinkyDistLable.setText(str(int(dists['pinky'])))
+    def set_dist(self, res):
+        self.totalDistLable.setText(str(int(res['total'])))
+        self.thumbDistLable.setText(str(int(res['thumb'])))
+        self.indexDistLable.setText(str(int(res['index'])))
+        self.middleDistLable.setText(str(int(res['middle'])))
+        self.ringDistLable.setText(str(int(res['ring'])))
+        self.pinkyDistLable.setText(str(int(res['pinky'])))
 
-    def set_tips(self, dists):
+    def set_tips(self, res):
         dist_too_large = set()
-        for k in dists:
-            if k == 'total':
+        for k in res:
+            if k in ['total', 'path']:
                 continue
-            if dists[k] <= 90:
+            if res[k] <= 90:
                 dist_too_large.add(k)
 
         if len(dist_too_large) > 2:
