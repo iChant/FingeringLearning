@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'CompareResultDialog.ui'
+## Form generated from reading UI file 'ResultDialog.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.14.1
 ##
@@ -28,10 +28,10 @@ class Ui_ResultDialog(object):
 
         self.gridLayout_3.addWidget(self.pauseButton, 4, 0, 1, 1)
 
-        self.pushButton_2 = QPushButton(ResultDialog)
-        self.pushButton_2.setObjectName(u"pushButton_2")
+        self.backButton = QPushButton(ResultDialog)
+        self.backButton.setObjectName(u"backButton")
 
-        self.gridLayout_3.addWidget(self.pushButton_2, 7, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.backButton, 7, 0, 1, 1)
 
         self.gridLayout_2 = QGridLayout()
         self.gridLayout_2.setObjectName(u"gridLayout_2")
@@ -131,11 +131,11 @@ class Ui_ResultDialog(object):
 
         self.gridLayout_3.addLayout(self.formLayout, 0, 0, 3, 1)
 
-        self.pushButton = QPushButton(ResultDialog)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setCheckable(True)
+        self.timeWarpingButton = QPushButton(ResultDialog)
+        self.timeWarpingButton.setObjectName(u"timeWarpingButton")
+        self.timeWarpingButton.setCheckable(True)
 
-        self.gridLayout_3.addWidget(self.pushButton, 5, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.timeWarpingButton, 5, 0, 1, 1)
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -168,7 +168,7 @@ class Ui_ResultDialog(object):
     def retranslateUi(self, ResultDialog):
         ResultDialog.setWindowTitle(QCoreApplication.translate("ResultDialog", u"Result", None))
         self.pauseButton.setText(QCoreApplication.translate("ResultDialog", u"Pause", None))
-        self.pushButton_2.setText(QCoreApplication.translate("ResultDialog", u"Back", None))
+        self.backButton.setText(QCoreApplication.translate("ResultDialog", u"Back", None))
         self.label.setText(QCoreApplication.translate("ResultDialog", u"Fingle", None))
         self.label_2.setText(QCoreApplication.translate("ResultDialog", u"Score", None))
         self.label_4.setText(QCoreApplication.translate("ResultDialog", u"Total", None))
@@ -183,7 +183,7 @@ class Ui_ResultDialog(object):
         self.ringDistLable.setText(QCoreApplication.translate("ResultDialog", u"Ring dist", None))
         self.label_19.setText(QCoreApplication.translate("ResultDialog", u"Pinky", None))
         self.pinkyDistLable.setText(QCoreApplication.translate("ResultDialog", u"Pinky dist", None))
-        self.pushButton.setText(QCoreApplication.translate("ResultDialog", u"Time Wrapped", None))
+        self.timeWarpingButton.setText(QCoreApplication.translate("ResultDialog", u"Time Warped", None))
         self.tipLabel.setText(QCoreApplication.translate("ResultDialog", u"TextLabel", None))
         self.saveButton.setText(QCoreApplication.translate("ResultDialog", u"Save", None))
     # retranslateUi

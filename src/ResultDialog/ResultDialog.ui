@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item row="7" column="0">
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="backButton">
      <property name="text">
       <string>Back</string>
      </property>
@@ -171,9 +171,9 @@
     </layout>
    </item>
    <item row="5" column="0">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="timeWarpingButton">
      <property name="text">
-      <string>Time Wrapped</string>
+      <string>Time Warped</string>
      </property>
      <property name="checkable">
       <bool>true</bool>

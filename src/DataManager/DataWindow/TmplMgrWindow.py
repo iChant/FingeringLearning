@@ -35,6 +35,8 @@ class TmplMgrWindow(QMainWindow, Ui_TmplMgrWindow):
                 self, 'Remove', self.tr('Really to remove the selected row?'), 
                 QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
             cur_idx = self.tableView.currentIndex().row()
+            tmpl_id = self.tmpl.model.record(cur_idx).value('id')
+            tmplmgr.remove_data(tmpl_id)
             self.tmpl.model.removeRow(cur_idx)
             if self.tmpl.model.submitAll():
                 self.tmpl.refresh()

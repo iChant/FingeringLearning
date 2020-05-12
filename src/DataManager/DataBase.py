@@ -53,6 +53,9 @@ class DataBase:
     def __add_quote(self, s: str):
         return '"{}"'.format(s)
 
+    def last_error(self):
+        return self.query.lastError()
+
 
 # For global singleton
 db = DataBase()

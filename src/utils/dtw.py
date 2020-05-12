@@ -1,5 +1,6 @@
 import numpy as np
 from fastdtw import fastdtw
+from HandPose.HandPose import get_feat
 
 
 # def get_feat(ser):
@@ -22,9 +23,9 @@ def __dist(f1, f2):
     cnt = 0
     # If there is some values that is obviously larger than the average, then
     # these 'obsolete' values would describe the dist between f1 and f2.
-    if res[res > aver * 2].shape[0] > 2 or \
-            (res.shape[0] == 3 and res[res > aver * 2].shape[0] == 1):
-        res = res[res > aver * 2]
+    if res[res > aver].shape[0] > 2 or \
+            (res.shape[0] == 3 and res[res > aver].shape[0] == 1):
+        res = res[res > aver]
     return np.sqrt((res * res).sum() / res.shape[0])
 
 
@@ -57,6 +58,29 @@ def dtw(x, y):
     # d /= min(p[-1][0], p[-1][1])
     d /= len(p)
     return d, p
+
+
+def get_dtw(user_gesture, standard_gesture):
+    res = {}
+
+    u_total, u_t, u_i, u_m, u_r, u_p = get_feat(user_gesture)
+    s_total, s_t, s_i, s_m, s_r, s_p = get_feat(standard_gesture)
+
+    # get distance and record them in res
+    res['total'], path = dtw(u_total, s_total)
+    res['thumb'], _ = dtw(u_t, s_t)
+    res['index'], _ = dtw(u_i, s_i)
+    res['middle'], _ = dtw(u_m, s_m)
+    res['ring'], _ = dtw(u_r, s_r)
+    res['pinky'], _ = dtw(u_p, s_p)
+
+    # convert distance to similarity score
+    for k in res:
+        res[k] = (1 - res[k]) * 100
+        res[k] = int(round(res[k], 4))
+
+    res['path'] = path
+    return res
 
 
 if __name__ == "__main__":

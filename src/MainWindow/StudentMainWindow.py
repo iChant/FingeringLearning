@@ -6,6 +6,10 @@ from DataManager import usermgr
 from .Ui_StudentMainWindow import Ui_StudentMainWindow
 from HandPose.HandPose import HandPose
 from CaptureWindow.FreeTraining import FreeTraining
+from CaptureWindow.ComparedLearning import ComparedLearningDialog
+from DataManager import tmplmgr
+from DataManager.DataWindow.ScoreViewer import ScoreMgrWindow
+from DataManager.DataWindow.TmplSelectDialog import TmplSelectDialog
 
 
 class StudentMainWindow(QMainWindow, Ui_StudentMainWindow):
@@ -29,10 +33,24 @@ class StudentMainWindow(QMainWindow, Ui_StudentMainWindow):
         f.show()
 
     def history_data(self):
-        pass
+        s = ScoreMgrWindow(
+            fil='sid="{}"'.format(usermgr.get_id()), parent=self)
+        s.setWindowModality(Qt.ApplicationModal)
+        s.show()
 
     def compared_learning(self):
-        pass
+        select = TmplSelectDialog(self)
+        select.submitted.connect(self.compared)
+        select.exec_()
+
+    def compared(self, tmpl_id):
+        data = tmplmgr.read_data(tmpl_id)
+        item = tmplmgr.get(id=tmpl_id)
+        type_id = int(list(item.keys())[0])
+        r = ComparedLearningDialog(data, type_id, self)
+        r.setWindowModality(Qt.ApplicationModal)
+        r.show()
+
     
     def exit(self):
         self.close()

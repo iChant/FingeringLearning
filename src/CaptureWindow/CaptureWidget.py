@@ -9,6 +9,7 @@ from .Ui_CaptureWidget import Ui_CaptureWidget
 from multiprocessing import Queue, Process
 from PoseEstimator.PoseEstimator import PoseEstimator
 from threading import Thread
+import numpy as np
 
 class CaptureWidget(QWidget, Ui_CaptureWidget):
     sig_stop = Signal(list)
@@ -47,7 +48,7 @@ class CaptureWidget(QWidget, Ui_CaptureWidget):
         self.stopButton.setDisabled(True)
         self.exitButton.setDisabled(False)
         self.estimator.stop()
-        self.sig_stop.emit(self.records)
+        self.sig_stop.emit(np.array(self.records))
         # if self.stop_callback is not None:
         #     self.stop_callback(self.records)
 

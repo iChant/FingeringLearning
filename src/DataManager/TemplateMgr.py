@@ -43,7 +43,9 @@ class TemplateMgr:
     def get(self, **kargs):
         """
         Return a list of template file paths which fit
-        the given conditions specified in `kargs`.
+        the given conditions specified in `kargs`. If
+        no params passed, the method will return the
+        whole list recorded in the database.
 
         :param id: item with specific id
         :param type_id: items with specific type_id
@@ -51,15 +53,18 @@ class TemplateMgr:
 
         :return: a dict contains the list of results
         """
-        conds = ['{}={}'.format(k, kargs[k]) for k in kargs]
-        condition = ' AND '.join(conds)
-        l = db.select(fields=('filepath', 'type_id'),
-            table='Template', condition=condition)
+        if len(kargs) == 0:
+            l = db.select(fields=('id', 'filepath', 'type_id'), table='Template')
+        else:
+            conds = ['{}={}'.format(k, str(kargs[k])) for k in kargs]
+            condition = ' AND '.join(conds)
+            l = db.select(fields=('id', 'filepath', 'type_id'),
+                table='Template', condition=condition)
         res = {}
         for i in l:
             if i['type_id'] not in res:
                 res[i['type_id']] = []
-            res[i['type_id']].append(i['filepath'])
+            res[i['type_id']].append((i['id'], i['filepath']))
         # print(res)
         return res
 
@@ -77,16 +82,25 @@ class TemplateMgr:
             print(db.query.lastError())
 
     def read_data(self, tmpl_id):
-        filepath = list(self.get(id=tmpl_id).values())[0][0]
+        filepath = list(self.get(id=tmpl_id).values())[0][0][1]
         return np.load(filepath)
-        
+
+    def get_type_id(self, tmpl_id):
+        tmpl_id = db.select(
+            fields=('type_id',), table='Template', condition='id={}'.format(str(tmpl_id)))
+        return int(tmpl_id[0]['type_id'])
+
+    def remove_data(self, tmpl_id):
+        filepath = list(self.get(id=tmpl_id).values())[0][0][1]
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
 tmplmgr = TemplateMgr()
 
 
 class TmplModel:
     def __init__(self, parent=None):
-        dirpath = os.path.dirname(os.path.abspath(__file__))
+        # dirpath = os.path.dirname(os.path.abspath(__file__))
         # self.db = QSqlDatabase.addDatabase('QSQLITE')
         # self.db.setDatabaseName(os.path.join(dirpath, 'grad.db'))
         # self.db.open()
