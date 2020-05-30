@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget, QApplication
+from PySide2.QtWidgets import QWidget, QApplication, QMessageBox
 from PySide2.QtCore import Qt, QTimer, Slot, Signal
 from PySide2.QtGui import QPixmap, QImage
 
@@ -26,10 +26,14 @@ class CaptureWidget(QWidget, Ui_CaptureWidget):
         self.stopButton.clicked.connect(self.stop)
         self.exitButton.clicked.connect(self.back)
         self.stopButton.setDisabled(True)
-        self.estimator = PoseEstimator()
         self.timer.start(int(1000/30))
+        
+
+    def lazy_load(self):
+        self.estimator = PoseEstimator()
         if not self.estimator.is_running:
             self.estimator.start()
+
 
     def draw_pose(self, img_show):
         img = QImage(

@@ -7,6 +7,7 @@ class CMD:
     READY = 'READY'
     QUIT = 'QUIT'
     GETPOSE = 'GETPOSE'
+    CAMERR = 'CAMERR'
 
 class PoseEstimator:
 
@@ -19,7 +20,10 @@ class PoseEstimator:
     def start(self):
         self.worker.start()
         self.is_running = True
-        if self.q.get() != CMD.READY:
+        res = self.q.get()
+        if res == CMD.CAMERR:
+            raise RuntimeError('Camera Error')
+        if res != CMD.READY:
             self.is_running = False
             self.worker.terminate()
             return -1
@@ -33,22 +37,28 @@ class PoseEstimator:
         self.q.put(CMD.GETPOSE)
         res = self.q.get()
         # print(res)
-        results, img_show = res['results'], res['img_show']
+        if res == CMD.CAMERR:
+            raise RuntimeError('Camera Error')
+        else:
+            results, img_show = res['results'], res['img_show']
         return results, img_show
 
 
 def run(q: Queue):
-    from Camera.Camera import Camera
-    from estimator.estimator import Estimator
-    camera = Camera()
-    estimator = Estimator()
-    q.put(CMD.READY)
-    while True:
-        frame = camera.get_frame()
-        r, i = estimator.get_result(frame)
-        cmd = q.get()
-        if cmd == CMD.GETPOSE:
-            q.put({'results': r, 'img_show': i})
-        elif cmd == CMD.QUIT:
-            break
-    camera.stop()
+    try:
+        from Camera.Camera import Camera
+        from estimator.estimator import Estimator
+        camera = Camera()
+        estimator = Estimator()
+        q.put(CMD.READY)
+        while True:
+            frame = camera.get_frame()
+            r, i = estimator.get_result(frame)
+            cmd = q.get()
+            if cmd == CMD.GETPOSE:
+                q.put({'results': r, 'img_show': i})
+            elif cmd == CMD.QUIT:
+                break
+        camera.stop()
+    except Exception as e:
+        q.put(CMD.CAMERR)

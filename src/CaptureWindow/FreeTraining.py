@@ -4,7 +4,7 @@ from utils.classify import Classifier
 from DataManager import tmplmgr
 from ResultDialog.ResultDialog import ResultDialog
 
-from PySide2.QtWidgets import QMainWindow
+from PySide2.QtWidgets import QMainWindow, QMessageBox
 from PySide2.QtCore import Slot
 
 
@@ -16,6 +16,17 @@ class FreeTraining(QMainWindow, Ui_FreeTraining):
         self.cw = CaptureWidget(parent=self)
         self.layout.addWidget(self.cw)
         self.cw.sig_stop.connect(self.on_stop)
+
+    
+    def lazy_load(self):
+        try:
+            self.cw.lazy_load()
+        except RuntimeError as re:
+            QMessageBox.critical(
+                self, 
+                'ERROR', 'Camera not available, please check if camera is plugged in!', 
+                QMessageBox.Ok)
+            self.close()
 
     def on_stop(self, records):
         self.close()

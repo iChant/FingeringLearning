@@ -3,7 +3,7 @@ from .Ui_ComparedLearning import Ui_ComparedLearningDialog
 from HandPose.HandPose import HandPose
 from ResultDialog.ResultDialog import ResultDialog
 
-from PySide2.QtWidgets import QDialog, QWidget
+from PySide2.QtWidgets import QDialog, QWidget, QMessageBox
 from PySide2.QtCore import Slot, QTimer
 
 
@@ -12,6 +12,7 @@ class ComparedLearningDialog(QDialog, Ui_ComparedLearningDialog):
         super(ComparedLearningDialog, self).__init__(parent)
         self.setupUi(self)
         self.cw = CaptureWidget(parent=self)
+        # self.sig_close.emit()
         self.standard_gesture = data
         self.type_id = type_id
         self.userGestureLayout.addWidget(self.cw)
@@ -26,6 +27,16 @@ class ComparedLearningDialog(QDialog, Ui_ComparedLearningDialog):
         self.setLayout(self.standardGestureLayout)
         self.model_timer.start(int(1000 / 20))
         self.model_timer.timeout.connect(self.get_model_frame)
+
+    def lazy_load(self):
+        try:
+            self.cw.lazy_load()
+        except RuntimeError as re:
+            QMessageBox.critical(
+                self, 
+                'ERROR', 'Camera not available, please check if camera is plugged in!', 
+                QMessageBox.Ok)
+            self.close()
 
     def on_stop(self, records):
         rd = ResultDialog(

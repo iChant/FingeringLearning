@@ -9,3 +9,6 @@ estimator/*
 
 .history/*
 .vscode/*
+
+*.db
+*.log

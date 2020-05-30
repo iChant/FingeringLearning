@@ -31,6 +31,7 @@ class StudentMainWindow(QMainWindow, Ui_StudentMainWindow):
         f = FreeTraining(self)
         f.setWindowModality(Qt.ApplicationModal)
         f.show()
+        f.lazy_load()
 
     def history_data(self):
         s = ScoreMgrWindow(
@@ -50,6 +51,7 @@ class StudentMainWindow(QMainWindow, Ui_StudentMainWindow):
         r = ComparedLearningDialog(data, type_id, self)
         r.setWindowModality(Qt.ApplicationModal)
         r.show()
+        r.lazy_load()
 
     
     def exit(self):

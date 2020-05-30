@@ -17,6 +17,16 @@ class StandardRec(QMainWindow, Ui_FreeTraining):
         self.cw.sig_close.connect(self.close)
         self.setWindowTitle('Standard Recorder')
 
+    def lazy_load(self):
+        try:
+            self.cw.lazy_load()
+        except RuntimeError as re:
+            QMessageBox.critical(
+                self, 
+                'ERROR', 'Camera not available, please check if camera is plugged in!', 
+                QMessageBox.Ok)
+            self.close()
+
     def on_stop(self, records):
         save_dialog = TmplSaveDialog(self)
         if save_dialog.exec_():
