@@ -14,7 +14,7 @@ class StandardRec(QMainWindow, Ui_FreeTraining):
         self.cw = CaptureWidget(parent=self)
         self.layout.addWidget(self.cw)
         self.cw.sig_stop.connect(self.on_stop)
-        self.cw.sig_close.connect(self.close)
+        self.cw.sig_close.connect(self.on_close)
         self.setWindowTitle('Standard Recorder')
 
     def lazy_load(self):
@@ -33,3 +33,6 @@ class StandardRec(QMainWindow, Ui_FreeTraining):
             t = save_dialog.get_save_type()
             tmplmgr.save_tmpl(records, type_name=t)
             self.close()
+
+    def on_close(self):
+        self.close()

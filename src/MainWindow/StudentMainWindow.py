@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QMainWindow, QWidget
 from PySide2.QtCore import Qt
 import os
+import time
 
 from DataManager import usermgr
 from .Ui_StudentMainWindow import Ui_StudentMainWindow

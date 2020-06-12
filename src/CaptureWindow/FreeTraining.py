@@ -7,6 +7,7 @@ from ResultDialog.ResultDialog import ResultDialog
 from PySide2.QtWidgets import QMainWindow, QMessageBox
 from PySide2.QtCore import Slot
 
+import time
 
 class FreeTraining(QMainWindow, Ui_FreeTraining):
     def __init__(self, parent=None):
@@ -31,7 +32,10 @@ class FreeTraining(QMainWindow, Ui_FreeTraining):
     def on_stop(self, records):
         self.close()
         classifier = Classifier()
+        t1 = time.time()
         target_tmpl_id = classifier.classify(records)
+        t2 = time.time()
+        print('classify time: {}'.format(t2 - t1))
         print(target_tmpl_id)
         tmpl_data = tmplmgr.read_data(target_tmpl_id)
         type_id = tmplmgr.get_type_id(target_tmpl_id)

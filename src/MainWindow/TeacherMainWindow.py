@@ -31,6 +31,7 @@ class TeacherMainWindow(QMainWindow, Ui_TeacherMainWindow):
         s = StandardRec(self)
         s.setWindowModality(Qt.ApplicationModal)
         s.show()
+        s.lazy_load()
     
     def fingering_manage(self):
         t = TmplMgrWindow(self)

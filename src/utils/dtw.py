@@ -23,8 +23,8 @@ def __dist(f1, f2):
     cnt = 0
     # If there is some values that is obviously larger than the average, then
     # these 'obsolete' values would describe the dist between f1 and f2.
-    if res[res > aver].shape[0] > 2 or \
-            (res.shape[0] == 3 and res[res > aver].shape[0] == 1):
+    if res[res > aver].shape[0] >= 1:
+            # (res.shape[0] == 3 and res[res > aver].shape[0] == 1):
         res = res[res > aver]
     return np.sqrt((res * res).sum() / res.shape[0])
 
@@ -54,9 +54,9 @@ def dtw(x, y):
     p_cnt = x.shape[1]
 
     # feat_x, feat_y = get_feat(x), get_feat(y)
-    d, p = fastdtw(x, y, dist=__dist)
-    # d /= min(p[-1][0], p[-1][1])
-    d /= len(p)
+    d, p = fastdtw(x, y, radius=2, dist=__dist)
+    d /= min(p[-1][0], p[-1][1])
+    # d /= len(p)
     return d, p
 
 

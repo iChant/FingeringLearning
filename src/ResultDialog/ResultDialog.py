@@ -7,6 +7,8 @@ from DataManager import scoremgr, usermgr
 from PySide2.QtWidgets import QDialog, QWidget, QMessageBox
 from PySide2.QtCore import QTimer
 
+import time
+
 
 class ResultDialog(QDialog, Ui_ResultDialog):
     def __init__(self, user_gesture, standard_gesture, type_id, parent=None):
@@ -48,7 +50,11 @@ class ResultDialog(QDialog, Ui_ResultDialog):
         self.setLayout(self.standardLayout)
 
         self.dist_too_large = False
+
+        t1 = time.time()
         self.res = get_dtw(self.user_gesture, self.standard_gesture)
+        t2 = time.time()
+        print('calc time: {}'.format(t2 - t1))
         self.set_dist(self.res)
         self.tipLabel.setEnabled(True)
         self.set_tips(self.res)

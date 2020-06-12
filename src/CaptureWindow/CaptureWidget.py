@@ -52,6 +52,7 @@ class CaptureWidget(QWidget, Ui_CaptureWidget):
         self.stopButton.setDisabled(True)
         self.exitButton.setDisabled(False)
         self.estimator.stop()
+        print('frame count: {}'.format(len(self.records)))
         self.sig_stop.emit(np.array(self.records))
         # if self.stop_callback is not None:
         #     self.stop_callback(self.records)

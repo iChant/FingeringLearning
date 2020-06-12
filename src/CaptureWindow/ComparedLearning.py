@@ -6,6 +6,8 @@ from ResultDialog.ResultDialog import ResultDialog
 from PySide2.QtWidgets import QDialog, QWidget, QMessageBox
 from PySide2.QtCore import Slot, QTimer
 
+import time
+
 
 class ComparedLearningDialog(QDialog, Ui_ComparedLearningDialog):
     def __init__(self, data, type_id, parent=None):

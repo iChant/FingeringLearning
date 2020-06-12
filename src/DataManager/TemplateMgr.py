@@ -7,6 +7,7 @@ from PySide2.QtCore import Qt
 
 import numpy as np
 import os
+import time
 
 class TypeInfo:
     def __init__(self):
@@ -70,7 +71,7 @@ class TemplateMgr:
 
     def save_tmpl(self, data, type_name):
         cnt = len(self.get(type_name=type_name))
-        filename = '{}-{}.npy'.format(type_name, str(cnt + 1))
+        filename = '{}.npy'.format(int(time.time()))
         path = os.path.join(ROOT_PATH, 'Template', filename)
         # print(path)
         if not os.path.exists(os.path.dirname(path)):
